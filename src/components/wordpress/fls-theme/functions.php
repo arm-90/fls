@@ -230,15 +230,30 @@ if (!function_exists('get_fls_fields')) {
 // Робота з блоками--------//
 //-------------------------//
 
+// Вимикати використання блоків в редакторі
+// add_filter('use_block_editor_for_post_type', function ($use_block_editor, $post_type) {
+// 	if ($post_type === 'page') {
+// 		return false;
+// 	}
+// 	return $use_block_editor;
+// }, 10, 2);
+
 // Додавання файлу обнулення для блоків
 add_action('admin_enqueue_scripts', function () {
 	wp_enqueue_style(
-		'fls-blocks-admin-styles', // унікальний ідентифікатор
-		get_template_directory_uri() . '/assets/css/admin-reset.css', // шлях до файлу
+		'fls-blocks-admin-reset-styles', // унікальний ідентифікатор
+		get_template_directory_uri() . '/components/blocks/admin/admin-reset.css', // шлях до файлу
+		[],
+		'0'
+	);
+	wp_enqueue_style(
+		'fls-blocks-admin-common-styles', // унікальний ідентифікатор
+		get_template_directory_uri() . '/components/blocks/admin/dist/css/admin-common.css', // шлях до файлу
 		[],
 		'0'
 	);
 });
+
 // Реєстрація блоків
 add_action('acf/init', function () {
 	$blocks_dir = get_template_directory() . '/components/blocks';

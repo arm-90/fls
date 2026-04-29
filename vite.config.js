@@ -180,11 +180,11 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
 											})
 										}
 									}
-									logger(`_DEV_DONE`)
+									templateConfig.statistics.enable ? logger(`_DEV_DONE`) : logger(`_DEV_DONE_STAT`)
 								}, 1000);
 							} else {
 								logger(`_DEV_HOST_ADDRESS`, isWp ? `http://localhost:8080` : `http://${templateConfig.server.hostname}:${templateConfig.server.port}`)
-								logger(`_DEV_DONE`)
+								templateConfig.statistics.enable ? logger(`_DEV_DONE`) : logger(`_DEV_DONE_STAT`)
 							}
 						}
 					}
@@ -316,15 +316,22 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
 				},
 			},
 			build: {
-				outDir: path.join(__dirname, "src/components/wordpress/fls-theme/components/blocks/dist"),
+				outDir: path.join(__dirname, "src/components/wordpress/fls-theme/components/blocks/admin/dist"),
 				emptyOutDir: true,
 				cssMinify: false,
 				rollupOptions: {
-					input: globSync('./src/components/wordpress/fls-theme/components/blocks/**/*.js', { ignore: [`**/dist/**`] }),
+					input: [
+						...globSync('./src/components/wordpress/fls-theme/components/blocks/**/*.js', { ignore: ['**/dist/**'] }),
+						'./src/styles/style.scss'
+					],
 					output: [{
 						entryFileNames: '[name].js',
 						assetFileNames: (asset) => {
-							return `css/[name][extname]`;
+							if (asset.name === 'style.css') {
+								return "css/admin-common.css"
+							} else {
+								return `css/[name][extname]`
+							}
 						}
 					}],
 					plugins: [

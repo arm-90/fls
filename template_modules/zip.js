@@ -49,7 +49,7 @@ export const zipPlugin = [
 		outDir: 'zip',
 		filter: (fileName, filePath, isDirectory) => {
 			const dirIgnorePath = !['backend', 'node_modules', 'dist', '.git', 'zip', '.vscode'].includes(filePath)
-			const fileIgnorePath = !['TODO.txt', '.gitignore', 'package-lock.json', '_temp.js'].includes(fileName)
+			const fileIgnorePath = !['TODO.txt', 'package-lock.json', '_temp.js'].includes(fileName)
 			return dirIgnorePath && fileIgnorePath
 		},
 		done: (err) => {

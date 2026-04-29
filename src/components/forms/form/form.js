@@ -71,6 +71,11 @@ function formInit() {
 			setTimeout(() => {
 				if (window.flsPopup) {
 					const popup = form.dataset.flsFormPopup;
+					// Додавання повідомлення в попап
+					if (form.dataset.flsFormPopupMessage) {
+						const popupElementContent = document.querySelector(`[data-fls-popup="${popup}"] [data-fls-popup-content]`)
+						popupElementContent.insertAdjacentHTML('afterbegin', form.dataset.flsFormPopupMessage)
+					}
 					popup ? window.flsPopup.open(popup) : null;
 				}
 			}, 0);

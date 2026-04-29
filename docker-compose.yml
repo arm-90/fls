@@ -1,6 +1,5 @@
 services:
   wordpress:
-    user: "1001:1001"
     image: wordpress:latest
     container_name: wordpress
     ports:

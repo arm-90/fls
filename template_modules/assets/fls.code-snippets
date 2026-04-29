@@ -819,6 +819,14 @@
 		],
 		"description": "bg+"
 	},
+	"bg WP": {
+		"scope": "css",
+		"prefix": "bgwp",
+		"body": [
+			"background: url('/wp-content/themes/fls-theme/assets/img/$0') 0 0 no-repeat;"
+		],
+		"description": "Image in css WP"
+	},
 	"md1": {
 		"prefix": "md1",
 		"body": [
@@ -1067,6 +1075,11 @@
 	"Image": {
 		"prefix": "im",
 		"body": "<img src=\"img$0\" alt=\"Image\">",
+		"description": "img"
+	},
+	"Image WP": {
+		"prefix": "imgwp",
+		"body": "<img src=\"/wp-content/themes/fls-theme/assets/img/$0\" alt=\"Image\">",
 		"description": "img"
 	},
 	"Image Lazy": {

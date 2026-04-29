@@ -20,7 +20,7 @@ const isWp = process.argv.includes('--wp')
 const isAssets = templateConfig.server.isassets || isWp ? `assets/` : ``
 const isWpBlocks = process.argv.includes('--blocks')
 
-const pathPrefix = isWp ? isWpBlocks ? `src/components/wordpress/fls-theme/components/blocks/dist/` : `src/components/wordpress/fls-theme/build/${isAssets}` : `dist/${isAssets}`
+const pathPrefix = isWp ? isWpBlocks ? `src/components/wordpress/fls-theme/components/blocks/admin/dist/` : `src/components/wordpress/fls-theme/build/${isAssets}` : `dist/${isAssets}`
 
 const pathToFiles = `${pathPrefix}css/*.css`
 const pathToDev = `${pathPrefix}css/dev`
@@ -149,7 +149,7 @@ export const stylesPlugins = [
 						cssFile = normalizePath(cssFile)
 						const fileName = cssFile.split('/').pop().replace('.css', '')
 						const cssCode = fs.readFileSync(cssFile, 'utf8');
-						const cssCodeWrapper = `.wp-block-acf-${fileName} {\n${cssCode}\n}`
+						const cssCodeWrapper = fileName === 'admin-common' ? `.acf-block-preview {\n${cssCode}\n}` : `.wp-block-acf-${fileName} {\n${cssCode}\n}`
 						fs.writeFileSync(cssFile, cssCodeWrapper, 'utf8');
 					});
 				}
