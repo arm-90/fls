@@ -135,7 +135,7 @@ export const fontPlugins = [
 			cssDest: path.resolve(iconsCSSFile),
 			cssFontsUrl: path.resolve('src/assets/svgicons/preview'),
 			types: ["woff2"],
-			dest: "src/assets/svgicons/preview",
+			dest: path.resolve("src/assets/svgicons/preview"),
 			cssTemplate: path.resolve('template_modules/iconfont/css.hbs'),
 			htmlTemplate: path.resolve('template_modules/iconfont/html.hbs'),
 			context: path.resolve('src/assets/svgicons/fixed'),
