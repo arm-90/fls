@@ -23,7 +23,7 @@
 				transition: left 0.3s;
 				z-index: 2;
 			}
-			[data-fls-menu-open] & {
+			html[data-fls-menu-open] & {
 				left: 0;
 				&::before {
 					left: 0;
@@ -78,7 +78,7 @@
 		span {
 			top: calc(50% - 1px);
 		}
-		[data-fls-menu-open] & {
+		html[data-fls-menu-open] & {
 			span {
 				width: 0;
 			}

@@ -226,6 +226,17 @@ if (!function_exists('get_fls_fields')) {
 	}
 }
 
+// Вивід дампу масиву
+if (!function_exists('vd')) {
+	function vd($var)
+	{
+		echo '<pre style="background: #fff; color: #000; padding: 10px; border: 1px solid #000; border-radius: 5px;">';
+		var_dump($var);
+		echo '</pre>';
+	}
+}
+
+
 //-------------------------//
 // Робота з блоками--------//
 //-------------------------//
@@ -238,21 +249,23 @@ if (!function_exists('get_fls_fields')) {
 // 	return $use_block_editor;
 // }, 10, 2);
 
-// Додавання файлу обнулення для блоків
+// Додавання файлів для блоків в адмінці
 add_action('admin_enqueue_scripts', function () {
 	wp_enqueue_style(
-		'fls-blocks-admin-reset-styles', // унікальний ідентифікатор
-		get_template_directory_uri() . '/components/blocks/admin/admin-reset.css', // шлях до файлу
+		'fls-blocks-admin-common-styles', // унікальний ідентифікатор
+		get_template_directory_uri() . '/components/blocks/admin/dist/css/app.css', // шлях до файлу
 		[],
 		'0'
 	);
-	wp_enqueue_style(
-		'fls-blocks-admin-common-styles', // унікальний ідентифікатор
-		get_template_directory_uri() . '/components/blocks/admin/dist/css/admin-common.css', // шлях до файлу
+	wp_enqueue_script(
+		'fls-blocks-admin-common-script', // унікальний ідентифікатор
+		get_template_directory_uri() . '/components/blocks/admin/dist/app.js', // шлях до файлу
 		[],
 		'0'
 	);
 });
+
+//-------------------------//
 
 // Реєстрація блоків
 add_action('acf/init', function () {
@@ -279,3 +292,97 @@ add_action('save_post', function ($post_id) {
 	//  if (get_post_type($post_id) !== 'page') return;
 	file_put_contents(get_template_directory() . '/reload.txt', time());
 }, 10, 1);
+
+
+//-------------------------//
+
+// Прибирання JS та CSS CF7
+add_filter('wpcf7_load_css', '__return_false');
+add_filter('wpcf7_load_js', '__return_false');
+
+//-------------------------//
+
+// Кастомна пагінація
+function render_blog_block_pagination($custom_query = null)
+{
+	global $wp_query;
+	$query = ($custom_query instanceof WP_Query) ? $custom_query : $wp_query;
+
+	$total_pages = $query->max_num_pages;
+
+	if ($total_pages <= 1) {
+		return;
+	}
+
+	$current_page = max(1, (int) $query->get('paged'), (int) get_query_var('paged'), (int) get_query_var('page'));
+
+	if (wp_doing_ajax()) {
+		$base = '%_%';
+	} else {
+		$base = trailingslashit(get_pagenum_link(999999999));
+		$base = str_replace('999999999/', '%#%/', $base);
+	}
+
+	$filter_cat = isset($_GET['filter_cat']) && ($_GET['filter_cat'] === 'all' || is_numeric($_GET['filter_cat'])) ? $_GET['filter_cat'] : null;
+
+	$links = paginate_links([
+		'base'      => $base,
+		'format'    => 'page/%#%',
+		'current'   => $current_page,
+		'total'     => $total_pages,
+		'type'      => 'array',
+		'prev_next' => false,
+		'add_args'  => $filter_cat ? ['filter_cat' => $filter_cat] : [],
+		'end_size'  => 1,
+		'mid_size'  => 2,
+	]);
+
+	if (empty($links)) {
+		return;
+	}
+
+	echo '<div data-fls-pagination class="pagination">';
+
+	echo '<ul aria-label="Pagination" class="pagination__list">';
+
+	if ($current_page > 1) {
+		$prev_url = wp_doing_ajax() ? '#page-' . ($current_page - 1) : get_pagenum_link($current_page - 1);
+
+		echo '<li class="pagination__item">';
+		echo '<a class="pagination__link pagination__link--icon-slider-arrow" href="' . esc_url($prev_url) . '" aria-label="Previous page"></a>';
+		echo '</li>';
+	}
+
+	foreach ($links as $link) {
+		$link = str_replace('page-numbers', 'pagination__link', $link);
+		$link = str_replace('current', 'pagination__link--active', $link);
+		echo '<li class="posts-pagination__item">' . $link . '</li>';
+	}
+
+	if ($current_page < $total_pages) {
+		$next_url = wp_doing_ajax() ? '#page-' . ($current_page + 1) : get_pagenum_link($current_page + 1);
+		echo '<li class="pagination__item">';
+		echo '<a class="pagination__link pagination__link--icon-slider-arrow" href="' . esc_url($next_url) . '" aria-label="Next page"></a>';
+		echo '</li>';
+	}
+
+	echo '</ul>';
+
+	$per_page = $query->get('posts_per_page');
+	if (empty($per_page)) {
+		$per_page = (int) get_option('posts_per_page');
+	}
+
+	$found_posts = (int) $query->found_posts;
+
+	if ($found_posts > 0) {
+		$from = ($current_page - 1) * $per_page + 1;
+		$to   = min($from + $per_page - 1, $found_posts);
+
+		echo '<div class="pagination__info">';
+		echo esc_html("{$from}-{$to} of {$found_posts} results");
+		echo '</div>';
+	}
+
+	echo '</div>';
+}

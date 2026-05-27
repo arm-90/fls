@@ -105,7 +105,6 @@ export const phpPlugins = [
 async function insertModules() {
 	const modules = new Set()
 	const phpFiles = new globSync(`src/components/wordpress/fls-theme/**/*.php`)
-	const jsBlocksFiles = new globSync(`src/components/wordpress/fls-theme/components/blocks/**/*.js`, { ignore: ['**/_*/', '**/_*.*', '**/dist/**'] })
 	const moduleJSFiles = new Glob(`src/components/**/*.js`, { ignore: ['**/_*.*', '**/plugins/**', '**/wordpress/**'] })
 	const modulePlugins = new Map()
 	for (let moduleJSFile of moduleJSFiles) {
@@ -139,12 +138,6 @@ async function insertModules() {
 			}
 
 		}
-	}
-
-	// Приєднання JS-файлів WP-блоків
-	for (let file of jsBlocksFiles) {
-		let jsBlocksFile = normalizePath(file).replace('src', '')
-		modules.add(`import '${jsBlocksFile}'`)
 	}
 
 	fs.writeFile('src/components/wordpress/fls-wp-modules.js', Array.from(modules).join('\n'), () => { })

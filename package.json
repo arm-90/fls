@@ -19,7 +19,6 @@
     "new": "node template_modules/createnewpage.js",
     "wp": "node template_modules/wordpress/terminal.js up -d && vite -- --wp",
     "wpblocks": "vite build --watch -- --blocks --wp",
-    "wpaddblock": "node template_modules/createwpblock.js",
     "wpbuild": "vite build -- --wp",
     "wpdeploy": "vite build -- --ftp --wp",
     "wpstop": "node template_modules/wordpress/terminal.js down"

@@ -8,6 +8,8 @@ import path from 'node:path'
 import { optimize } from 'svgo'
 import { readFile, writeFile } from 'fs/promises'
 
+const isWpBlocks = process.argv.includes('--blocks')
+
 // ---------------------------------------
 import SVGFixer from 'oslllo-svg-fixer'
 // ---------------------------------------
@@ -19,7 +21,7 @@ export async function svgOptimaze(iconsFiles) {
 
 	!fs.existsSync(distDir) ? fs.mkdirSync(distDir) : null
 
-	logger('_ICONS_OPT_START')
+	!isWpBlocks ? logger('_ICONS_OPT_START') : null
 
 	// Оптимізація SVG іконок
 	// Convert SVG strokes to paths and optimize SVG
@@ -70,7 +72,7 @@ export async function svgOptimaze(iconsFiles) {
 
 	try {
 		await SVGFixer(distDir, distDir, { throwIfDestinationDoesNotExist: false }).fix().then(() => {
-			logger('_ICONS_OPT_END')
+			!isWpBlocks ? logger('_ICONS_OPT_END') : null
 		})
 	} catch (err) {
 		console.log(err)

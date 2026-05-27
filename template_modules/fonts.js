@@ -18,6 +18,7 @@ import { svgOptimaze } from './svgoptimaze.js'
 
 const isProduction = process.env.NODE_ENV === 'production'
 const isWp = process.argv.includes('--wp')
+const isWpBlocks = process.argv.includes('--blocks')
 
 // Шляхи до файлів
 const fontsHTMLFile = 'src/components/layout/head/fonts-preload.html'
@@ -90,7 +91,7 @@ const fontHtmlCss = () => {
 				file.includes(' ') ? fs.rename(file, file.replace(' ', '-'), () => { }) : null
 			}
 		}
-		logger(`_FONTS_DONE`, [counter.all])
+		!isWpBlocks ? logger(`_FONTS_DONE`, [counter.all]) : null
 	} else {
 		// Якщо шрифтів немає
 		fs.writeFile(fontsHTMLFile, '', cb)

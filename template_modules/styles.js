@@ -112,7 +112,7 @@ export const stylesPlugins = [
 		}
 	}] : []),
 	// Створення копії файлу(лів) для розробніків
-	...((isProduction && templateConfig.styles.devfiles && !isWpBlocks) ? [{
+	...((isProduction && templateConfig.styles.devfiles && !templateConfig.server.globaldecompress && !isWpBlocks) ? [{
 		name: "css-devfiles",
 		apply: 'build',
 		enforce: 'pre',
@@ -147,15 +147,49 @@ export const stylesPlugins = [
 				if (cssFiles.length) {
 					cssFiles.forEach(async (cssFile) => {
 						cssFile = normalizePath(cssFile)
-						const fileName = cssFile.split('/').pop().replace('.css', '')
 						const cssCode = fs.readFileSync(cssFile, 'utf8');
-						const cssCodeWrapper = fileName === 'admin-common' ? `.acf-block-preview {\n${cssCode}\n}` : `.wp-block-acf-${fileName} {\n${cssCode}\n}`
-						fs.writeFileSync(cssFile, cssCodeWrapper, 'utf8');
+						fs.writeFileSync(cssFile, addWpBlockPreviewSelector(cssCode), 'utf8');
 					});
 				}
 			}
 		}
 	}] : [])
 ]
+
+const wpBlockPreviewSelector = '.acf-block-preview'
+const wpEditorWrapper = '.editor-styles-wrapper'
+function addWpBlockPreviewSelector(cssCode) {
+	const root = postcss.parse(cssCode)
+	root.walkRules((rule) => {
+		const isKeyframesRule = rule.parent?.type === 'atrule' && /keyframes$/i.test(rule.parent.name)
+
+		if (isKeyframesRule) return
+
+		rule.selectors = rule.selectors.map((selector) => {
+			const trimmedSelector = selector.trim()
+
+			if (
+				!trimmedSelector ||
+				trimmedSelector === wpBlockPreviewSelector ||
+				trimmedSelector.startsWith(`${wpBlockPreviewSelector} `) ||
+				trimmedSelector.startsWith(`${wpBlockPreviewSelector}:`)
+			) {
+				return selector
+			}
+
+			if (trimmedSelector === 'body') return wpEditorWrapper
+			if (trimmedSelector === ':root') return wpEditorWrapper
+
+			if (trimmedSelector.startsWith(`html`)) return selector
+
+
+
+			return `${wpBlockPreviewSelector} ${selector}`
+		})
+	})
+	return root.toString()
+}
+
+
 // Повідомлення
 templateConfig.styles.tailwindcss ? logger(`Tailwind підключений`) : null

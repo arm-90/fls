@@ -12,6 +12,7 @@ import fs from 'fs'
 const isProduction = process.env.NODE_ENV === 'production'
 const isWp = process.argv.includes('--wp')
 const isAssets = templateConfig.server.isassets || isWp ? `assets/` : ``
+const isWpBlocks = process.argv.includes('--blocks')
 
 const pathPrefix = isWp ? `src/components/wordpress/fls-theme/build/${isAssets}` : `dist/${isAssets}`
 
@@ -48,7 +49,7 @@ export const scriptsPlugins = [
 		}
 	}] : []),
 	// Створення копії файлу(лів) для розробніків
-	...((isProduction && templateConfig.js.devfiles) ? [{
+	...((isProduction && templateConfig.js.devfiles && !templateConfig.server.globaldecompress && !isWpBlocks) ? [{
 		name: "js-devfiles",
 		apply: 'build',
 		enforce: 'pre',

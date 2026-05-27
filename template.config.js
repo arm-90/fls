@@ -37,6 +37,7 @@ export default {
 	},
 	server: {
 		path: './',
+		globaldecompress: true,
 		isassets: false,
 		buildforlocal: false,
 		copyfiles: true,

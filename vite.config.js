@@ -229,8 +229,8 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
 				outDir: isWp ? path.join(__dirname, "src/components/wordpress/fls-theme/build") : path.join(__dirname, "dist"),
 				emptyOutDir: true,
 				manifest: false,
-				minify: !templateConfig.js.devfiles,
-				cssMinify: !templateConfig.styles.devfiles,
+				minify: (!templateConfig.js.devfiles && !templateConfig.server.globaldecompress),
+				cssMinify: (!templateConfig.styles.devfiles && !templateConfig.server.globaldecompress),
 				cssCodeSplit: templateConfig.styles.codesplit,
 				assetsInlineLimit: 0,
 				rollupOptions: {
@@ -257,7 +257,8 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
 							let getPath = asset.originalFileNames[0] && asset.names && asset.names.length > 0 ? asset.originalFileNames[0].replace(`/${asset.names[0]}`, '') : ''
 							let extType = asset.names && asset.names.length > 0 ? asset.names[0].split('.').pop() : ''
 							if (/css/.test(extType)) {
-								return templateConfig.js.bundle.enable || templateConfig.server.buildforlocal ? `${isAssets}css/app.min[extname]` : `${isAssets}css/[name].min[extname]`
+								const sufix = templateConfig.server.globaldecompress ? 'css' : 'min.css'
+								return templateConfig.js.bundle.enable || templateConfig.server.buildforlocal ? `${isAssets}css/app.${sufix}` : `${isAssets}css/[name].${sufix}`
 							} else {
 								if (/eot|otf|ttf|woff|woff2/.test(extType)) {
 									extType = "assets/fonts";
@@ -268,10 +269,11 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
 							}
 						},
 						entryFileNames(name) {
-							return templateConfig.js.bundle.enable || templateConfig.server.buildforlocal ? `${isAssets}js/app.min.js` : `${isAssets}js/[name].min.js`
+							const sufix = templateConfig.server.globaldecompress ? 'js' : 'min.js'
+							return templateConfig.js.bundle.enable || templateConfig.server.buildforlocal ? `${isAssets}js/app.${sufix}` : `${isAssets}js/[name].${sufix}`
 						},
 						chunkFileNames(name) {
-							return templateConfig.js.bundle.enable || templateConfig.server.buildforlocal ? `${isAssets}js/app.min.js` : `${isAssets}js/[name].min.js`
+							return templateConfig.js.bundle.enable || templateConfig.server.buildforlocal ? `${isAssets}js/app.${sufix}` : `${isAssets}js/[name].${sufix}`
 						}
 					}],
 				}
@@ -281,7 +283,7 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
 		return {
 			base: './',
 			logLevel: "silent",
-			root: path.join(__dirname, "src/components/wordpress/fls-theme/components/blocks"),
+			root: path.join(__dirname, "src"),
 			server: {
 				watch: {
 					ignored: [
@@ -293,6 +295,19 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
 			plugins: [
 				// Робота з стилями
 				...templateImports.stylesPlugins,
+				// Робота з скриптами
+				...templateImports.scriptsPlugins,
+				{
+					name: 'message-build',
+					apply: 'build',
+					enforce: 'post',
+					closeBundle: {
+						order: 'post',
+						handler: async () => {
+							logger(`_BUILD_WPBLOCKS_DONE`)
+						}
+					},
+				},
 			],
 			resolve: {
 				alias: {
@@ -320,18 +335,11 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
 				emptyOutDir: true,
 				cssMinify: false,
 				rollupOptions: {
-					input: [
-						...globSync('./src/components/wordpress/fls-theme/components/blocks/**/*.js', { ignore: ['**/dist/**'] }),
-						'./src/styles/style.scss'
-					],
+					input: ['src/components/wordpress/fls-theme/assets/app.js'],
 					output: [{
 						entryFileNames: '[name].js',
 						assetFileNames: (asset) => {
-							if (asset.name === 'style.css') {
-								return "css/admin-common.css"
-							} else {
-								return `css/[name][extname]`
-							}
+							return `css/[name][extname]`
 						}
 					}],
 					plugins: [
@@ -342,3 +350,4 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
 		}
 	}
 })
+
