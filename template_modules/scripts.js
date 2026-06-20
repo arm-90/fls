@@ -14,7 +14,7 @@ const isWp = process.argv.includes('--wp')
 const isAssets = templateConfig.server.isassets || isWp ? `assets/` : ``
 const isWpBlocks = process.argv.includes('--blocks')
 
-const pathPrefix = isWp ? `src/components/wordpress/fls-theme/build/${isAssets}` : `dist/${isAssets}`
+const pathPrefix = isWp ? `src/wordpress/fls-theme/build/${isAssets}` : `dist/${isAssets}`
 
 const pathToFiles = `${pathPrefix}js/*.js`
 const pathToDev = `${pathPrefix}js/dev`

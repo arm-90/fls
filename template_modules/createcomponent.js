@@ -5,7 +5,7 @@ import logger from './logger.js'
 import fs from 'fs'
 import path from 'path'
 
-const phpPath = `src/components/wordpress/fls-theme/components/blocks`
+const phpPath = `src/wordpress/fls-theme/components/blocks`
 
 async function createFlsComponent() {
 	const name = process.argv[2].toLowerCase()
@@ -13,7 +13,7 @@ async function createFlsComponent() {
 		logger(`_CREATE_COMPONENT_ERROR`)
 	} else {
 		const folderPathInHTML = findFolderRecursive(`src/components`, name, true)
-		const folderPathInWp = findFolderRecursive(`src/components/wordpress/fls-theme/components/blocks`, name)
+		const folderPathInWp = findFolderRecursive(`src/wordpress/fls-theme/components/blocks`, name)
 		if (fs.existsSync(`src/components/custom/${name}`) || (folderPathInHTML && folderPathInWp)) {
 			logger(`_CREATE_COMPONENT_EXIST`, [name, folderPathInHTML])
 		} else {

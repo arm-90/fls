@@ -9,15 +9,15 @@ import { normalizePath } from 'vite'
 const isProduction = process.env.NODE_ENV === 'production'
 
 export default function wpAssetsInclude() {
-	const file = `src/components/wordpress/fls-theme/inc/assets-include.php`
+	const file = `src/wordpress/fls-theme/inc/assets-include.php`
 	const moduleType = []
 	let data = ``
 	data = `<?`
 	data += `const VITE_HOST='http://${templateConfig.server.hostname}:${templateConfig.server.port}';`
 	data += `function add_vite() {`
 	if (isProduction) {
-		const jsFiles = globSync(`src/components/wordpress/fls-theme/build/assets/js/*.js`)
-		const cssFiles = globSync(`src/components/wordpress/fls-theme/build/assets/css/*.css`)
+		const jsFiles = globSync(`src/wordpress/fls-theme/build/assets/js/*.js`)
+		const cssFiles = globSync(`src/wordpress/fls-theme/build/assets/css/*.css`)
 		const files = [...jsFiles, ...cssFiles]
 		files.forEach(file => {
 			file = normalizePath(file)
@@ -30,13 +30,13 @@ export default function wpAssetsInclude() {
 				moduleType.push(fileName)
 			}
 		})
-		fs.writeFileSync(`src/components/wordpress/fls-theme/build/assets/js/custom.js`, '')
-		fs.writeFileSync(`src/components/wordpress/fls-theme/build/assets/css/custom.css`, '')
+		fs.writeFileSync(`src/wordpress/fls-theme/build/assets/js/custom.js`, '')
+		fs.writeFileSync(`src/wordpress/fls-theme/build/assets/css/custom.css`, '')
 		data += `wp_enqueue_style('vite-custom-css','/wp-content/themes/fls-theme/build/assets/css/custom.css',array(),null,'all');`
 		data += `wp_enqueue_script('vite-custom-js','/wp-content/themes/fls-theme/build/assets/js/custom.js',array(),null,true);`
 	} else {
 		data += `wp_enqueue_script('vite-client',VITE_HOST.'/@vite/client',array(),null,true);`
-		data += `wp_enqueue_script('vite-app',VITE_HOST.'/components/wordpress/fls-theme/assets/app.js',array(),null,true);`
+		data += `wp_enqueue_script('vite-app',VITE_HOST.'//wordpress/fls-theme/assets/app.js',array(),null,true);`
 
 		if (templateConfig.images.svgsprite) {
 			data += `wp_enqueue_script('vite-sprite',VITE_HOST.'/@vite-plugin-svg-spritemap/client__spritemap',array(),null,true);`

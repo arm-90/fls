@@ -10,7 +10,7 @@ const isFtp = process.argv.includes('--ftp')
 const isWp = process.argv.includes('--wp')
 
 const config = {
-	localRoot: isWp ? 'src/components/wordpress/fls-theme' : 'dist',
+	localRoot: isWp ? 'src/wordpress/fls-theme' : 'dist',
 	host: templateConfig.ftp.host,
 	port: templateConfig.ftp.port,
 	include: ["*.*"],

@@ -18,6 +18,7 @@
     "add": "node template_modules/createcomponent.js",
     "new": "node template_modules/createnewpage.js",
     "wp": "node template_modules/wordpress/terminal.js up -d && vite -- --wp",
+	 "wponline": "node template_modules/wordpress/terminal.js up -d && vite --host -- --wp",
     "wpblocks": "vite build --watch -- --blocks --wp",
     "wpbuild": "vite build -- --wp",
     "wpdeploy": "vite build -- --ftp --wp",

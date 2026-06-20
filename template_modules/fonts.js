@@ -121,7 +121,7 @@ async function addWpFonts() {
 	const styles = []
 	styles.push(`import '@styles/fonts/fonts.css'`)
 	iconsFiles.length && templateConfig.fonts.iconsfont ? styles.push(`import '@styles/fonts/iconfont.css'`) : null
-	fs.writeFile('src/components/wordpress/fls-wp-fonts.js', styles.join('\n'), () => { })
+	fs.writeFile('src/wordpress/fls-wp-fonts.js', styles.join('\n'), () => { })
 }
 // Плагіни
 export const fontPlugins = [

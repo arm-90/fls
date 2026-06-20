@@ -104,7 +104,7 @@ export const phpPlugins = [
 ]
 async function insertModules() {
 	const modules = new Set()
-	const phpFiles = new globSync(`src/components/wordpress/fls-theme/**/*.php`)
+	const phpFiles = new globSync(`src/wordpress/fls-theme/**/*.php`)
 	const moduleJSFiles = new Glob(`src/components/**/*.js`, { ignore: ['**/_*.*', '**/plugins/**', '**/wordpress/**'] })
 	const modulePlugins = new Map()
 	for (let moduleJSFile of moduleJSFiles) {
@@ -140,13 +140,13 @@ async function insertModules() {
 		}
 	}
 
-	fs.writeFile('src/components/wordpress/fls-wp-modules.js', Array.from(modules).join('\n'), () => { })
+	fs.writeFile('src/wordpress/fls-wp-modules.js', Array.from(modules).join('\n'), () => { })
 }
 async function insertStyles() {
 	const styles = []
 	styles.push(templateConfig.styles.tailwindcss ? `import '@styles/libs/tailwind.css'` : `import '@styles/libs/reset.css'`)
 	styles.push(`import '@styles/style.scss'`)
-	fs.writeFile('src/components/wordpress/fls-wp-styles.js', styles.join('\n'), () => { })
+	fs.writeFile('src/wordpress/fls-wp-styles.js', styles.join('\n'), () => { })
 }
 function copyFolder(dir) {
 	try {
@@ -160,7 +160,7 @@ function copyFolder(dir) {
 	}
 }
 function wpPathToSprite() {
-	const phpFiles = new globSync(`src/components/wordpress/fls-theme/*.php`)
+	const phpFiles = new globSync(`src/wordpress/fls-theme/*.php`)
 	phpFiles.forEach(phpFile => {
 		let content = fs.readFileSync(phpFile, 'utf-8')
 		// Шлихи SVG-спрайту

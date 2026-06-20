@@ -45,8 +45,8 @@ async function createFlsPage() {
 			fs.writeFileSync(`src/components/pages/${name}/${name}.html`, `<div data-fls-${name} class="${name}">\n</div>`)
 			fs.writeFileSync(`src/components/pages/${name}/${name}.js`, `import './${name}.scss'`)
 
-			fs.mkdirSync(`src/components/wordpress/fls-theme/components/${name}`)
-			fs.writeFileSync(`src/components/wordpress/fls-theme/pages/${name}.php`, `
+			fs.mkdirSync(`src/wordpress/fls-theme/components/${name}`)
+			fs.writeFileSync(`src/wordpress/fls-theme/pages/${name}.php`, `
 <? /* Template Name: ${name} page template */ ?>
 <? get_header() ?>
 <main class="page">

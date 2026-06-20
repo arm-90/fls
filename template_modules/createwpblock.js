@@ -6,7 +6,7 @@ import fs from 'fs'
 import path from 'path'
 
 const htmlPath = `src/components/custom`
-const phpPath = `src/components/wordpress/fls-theme/components/blocks`
+const phpPath = `src/wordpress/fls-theme/components/blocks`
 
 async function createFlsComponent() {
 	const name = process.argv[2].toLowerCase()
